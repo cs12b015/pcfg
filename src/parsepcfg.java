@@ -11,29 +11,38 @@ public class parsepcfg {
     public static HashMap<String, ArrayList<Integer>> list_frequency = new HashMap<String, ArrayList<Integer>>();
 
     public static void main(String[] args) throws IOException{
+    	
         PrintWriter writer = new PrintWriter("HWfull.txt", "UTF-8");
-        BufferedReader br = new BufferedReader(new FileReader("../data/A1.E1-NEW.mrg"));
-        String line= null;
-        int lb=0;
-        int rb=0;
-        String temp="";
         ArrayList<String> rulestemparray = new ArrayList<String>();
         ArrayList<String> rulesarray = new ArrayList<String>();
-        while((line = br.readLine()) != null){
-            for(int i=0;i<line.length();i++){
-                if(line.charAt(i) == '('){
-                    lb++;
-                }else if (line.charAt(i) == ')'){
-                    rb++;
-                }
-            }
-            temp=temp+line;
-            if(rb == lb){
-                lb=0;rb=0;
-                rulestemparray.add(temp);
-                temp="";
-            }        
+        List<String> lines = Files.readAllLines(Paths.get("filenamess.txt"), StandardCharsets.UTF_8);
+	     
+        for(int in=0;in<lines.size();in++){
+	        BufferedReader br = new BufferedReader(new FileReader("data/"+lines.get(in)));
+	        String line= null;
+	        int lb=0;
+	        int rb=0;
+	        String temp="";
+	       
+	        while((line = br.readLine()) != null){
+	            for(int i=0;i<line.length();i++){
+	                if(line.charAt(i) == '('){
+	                    lb++;
+	                }else if (line.charAt(i) == ')'){
+	                    rb++;
+	                }
+	            }
+	            temp=temp+line;
+	            if(rb == lb){
+	                lb=0;rb=0;
+	                rulestemparray.add(temp);
+	               
+	                temp="";
+	            }        
+	        }
+        
         }
+        
         for(int i=0;i<rulestemparray.size();i++)
         {
             if(rulestemparray.get(i).trim().equals("\n")){}
@@ -41,11 +50,11 @@ public class parsepcfg {
             else if(rulestemparray.get(i).contains("CODE")){}
             else{
                 rulesarray.add(rulestemparray.get(i));
+                writer.println(rulestemparray.get(i));
             }
         }
 
-        for(int i=0;i<rulesarray.size();i++)
-            writer.println(rulesarray.get(i));
+      
         writer.close();
 
         for (int i = 0; i < rulesarray.size(); i++){
@@ -161,6 +170,7 @@ public class parsepcfg {
                        */
 
                     while(str.charAt(j) == ')'){  
+                    	if(keys.size()==0){break;}
                         if (list.containsKey(keys.get(keys.size()-1))){
                             ArrayList<ArrayList<String>> temp_list1 = list.get(keys.get(keys.size()-1));
                             ArrayList<Integer> temp_list1_freq = list_frequency.get(keys.get(keys.size()-1));
