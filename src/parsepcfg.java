@@ -33,7 +33,7 @@ public class parsepcfg {
         for(int i=0;i<rulestemparray.size();i++)
         {
         	if(rulestemparray.get(i).trim().equals("\n")){}
-        	else if(rulestemparray.get(i).equals(" ")){}
+        	else if(rulestemparray.get(i).equals("")){}
         	else if(rulestemparray.get(i).contains("CODE")){}
         	else{
         		rulesarray.add(rulestemparray.get(i));
