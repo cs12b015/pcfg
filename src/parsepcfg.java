@@ -8,6 +8,7 @@ import java.nio.file.Paths;
 public class parsepcfg {
 
     public static HashMap<String, ArrayList<ArrayList<String>>> list = new HashMap<String, ArrayList<ArrayList<String>>>();
+    public static HashMap<String, ArrayList<Integer>> list_frequency = new HashMap<String, ArrayList<Integer>>();
 
     public static void main(String[] args) throws IOException{
         PrintWriter writer = new PrintWriter("HWfull.txt", "UTF-8");
