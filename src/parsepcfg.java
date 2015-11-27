@@ -170,7 +170,11 @@ public class parsepcfg {
                        */
 
                     while(str.charAt(j) == ')'){  
-                    	if(keys.size()==0){break;}
+                    	
+                    	if(keys.size()==0){	
+                    		j++;
+                    		break;
+                    	}
                         if (list.containsKey(keys.get(keys.size()-1))){
                             ArrayList<ArrayList<String>> temp_list1 = list.get(keys.get(keys.size()-1));
                             ArrayList<Integer> temp_list1_freq = list_frequency.get(keys.get(keys.size()-1));
