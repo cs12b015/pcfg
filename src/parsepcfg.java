@@ -12,7 +12,7 @@ public class parsepcfg {
 
     public static void main(String[] args) throws IOException{
         PrintWriter writer = new PrintWriter("HWfull.txt", "UTF-8");
-        BufferedReader br = new BufferedReader(new FileReader("data/A1.E1-NEW.mrg"));
+        BufferedReader br = new BufferedReader(new FileReader("../data/A1.E1-NEW.mrg"));
         String line= null;
         int lb=0;
         int rb=0;
@@ -59,6 +59,7 @@ public class parsepcfg {
             parser(keys, values, str);
         }
         System.out.println(list);
+        System.out.println(list_frequency);
 
         /*
            String str = rulesarray.get(0);
@@ -75,7 +76,7 @@ public class parsepcfg {
     public static void parser(ArrayList<String> keys, ArrayList<ArrayList<String>> values, String str){
 
         if (str == ""){
-            //System.out.println("Finished parsing tree");
+            System.out.println("Finished parsing tree");
         } else {
 
             //System.out.println("Called function parser");
@@ -162,18 +163,27 @@ public class parsepcfg {
                     while(str.charAt(j) == ')'){  
                         if (list.containsKey(keys.get(keys.size()-1))){
                             ArrayList<ArrayList<String>> temp_list1 = list.get(keys.get(keys.size()-1));
+                            ArrayList<Integer> temp_list1_freq = list_frequency.get(keys.get(keys.size()-1));
                             ArrayList<String> temp_list2 = values.get(keys.size()-1);
                             if (temp_list1.contains(temp_list2)){
                                 //Increase counter
+                            	int index = temp_list1.indexOf(temp_list2);
+                            	int prev = temp_list1_freq.get(index);
+                            	temp_list1_freq.set(index, prev+1);
                             }else {
                                 temp_list1.add(temp_list2);
+                                temp_list1_freq.add(1);
                             }
                             list.put(keys.get(keys.size()-1), temp_list1);
+                            list_frequency.put(keys.get(keys.size()-1), temp_list1_freq);
                         } else{
                             ArrayList<ArrayList<String>> temp_list1 = new ArrayList<ArrayList<String>>();
+                            ArrayList<Integer> temp_list1_freq = new ArrayList<Integer>();
+                            temp_list1_freq.add(1);
                             ArrayList<String> temp_list2 = values.get(keys.size()-1);
                             temp_list1.add(temp_list2);
                             list.put(keys.get(keys.size()-1), temp_list1);
+                            list_frequency.put(keys.get(keys.size()-1), temp_list1_freq);
                         }
                         //System.out.println("Key-value pair removed are: " + keys.get(keys.size()-1) + " - " + values.get(keys.size()-1));
                         keys.remove(keys.size()-1);
