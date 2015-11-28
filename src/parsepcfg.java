@@ -15,10 +15,10 @@ public class parsepcfg {
         PrintWriter writer = new PrintWriter("HWfull.txt", "UTF-8");
         ArrayList<String> rulestemparray = new ArrayList<String>();
         ArrayList<String> rulesarray = new ArrayList<String>();
-        List<String> lines = Files.readAllLines(Paths.get("../filenamess.txt"), StandardCharsets.UTF_8);
+        List<String> lines = Files.readAllLines(Paths.get("filenamess.txt"), StandardCharsets.UTF_8);
 
         for(int in=0;in<lines.size();in++){
-            BufferedReader br = new BufferedReader(new FileReader("../data/"+lines.get(in)));
+            BufferedReader br = new BufferedReader(new FileReader("data/"+lines.get(in)));
             String line= null;
             int lb=0;
             int rb=0;
@@ -58,7 +58,6 @@ public class parsepcfg {
         writer.close();
 
         for (int i = 0; i < rulesarray.size(); i++){
-            //for each tree in the array, do the following
             String str = rulesarray.get(i);
             str = str.substring(1,str.length()-1);
             str = str.trim();
@@ -67,32 +66,47 @@ public class parsepcfg {
 
             parser(keys, values, str);
         }
+        
         System.out.println(list);
         System.out.println(list_frequency);
-
-        /*
-           String str = rulesarray.get(0);
-           str = str.substring(1,str.length()-1);
-           str = str.trim();
-           ArrayList<String> keys = new ArrayList<String>();
-           ArrayList<ArrayList<String>> values = new ArrayList<ArrayList<String>>();
-
-           parser(keys, values, str);
-           System.out.println(list);
-           */
+        ArrayList <String> keyarray = new ArrayList <String> (list.keySet());
+        ArrayList <String> freqkeyarray = new ArrayList <String> (list_frequency.keySet());
+        
+        writer = new PrintWriter("rulefile.txt", "UTF-8");
+        for(int i=0;i<keyarray.size();i++){
+        	ArrayList< ArrayList <String> >temparray = list.get(keyarray.get(i));
+        	ArrayList< Integer >freqtemparray = list_frequency.get(freqkeyarray.get(i));
+        	for(int j=0;j<temparray.size();j++){
+        		String tempstring="";
+        		ArrayList<String> temparraystring = temparray.get(j);
+        		for(int k=0;k<temparraystring.size();k++){
+        			tempstring=tempstring+temparraystring.get(k)+" ";
+        		}
+        		tempstring=tempstring.trim();
+        		writer.println(keyarray.get(i)+" --> "+ tempstring+" ---> " +freqtemparray.get(j));
+        	}
+        }
+        writer.close();
+        
     }
 
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     public static void parser(ArrayList<String> keys, ArrayList<ArrayList<String>> values, String str){
 
         if (str == ""){
             System.out.println("Finished parsing tree");
         } else {
-
-            //System.out.println("Called function parser");
-            // System.out.println("Keys are: ");
-            // System.out.println(keys);
-            // System.out.println("Values are: ");
-            // System.out.println(values);
 
             if(str.charAt(0) == '('){
                 String temp = "";
@@ -166,12 +180,6 @@ public class parsepcfg {
                         }
                     }
 
-                    /*
-                       System.out.println("Keys are: ");
-                       System.out.println(keys);
-                       System.out.println("Values are: ");
-                       System.out.println(values);
-                       */
 
                     while(str.charAt(j) == ')'){  
 
@@ -203,7 +211,6 @@ public class parsepcfg {
                             list.put(keys.get(keys.size()-1), temp_list1);
                             list_frequency.put(keys.get(keys.size()-1), temp_list1_freq);
                         }
-                        //System.out.println("Key-value pair removed are: " + keys.get(keys.size()-1) + " - " + values.get(keys.size()-1));
                         keys.remove(keys.size()-1);
                         values.remove(values.size()-1);
                         j++;
@@ -216,7 +223,6 @@ public class parsepcfg {
                             j++;
                         }
                         str = str.substring(j);
-                        //System.out.println(str.trim());
                         parser(keys,values,str.trim());
                     }
                 }

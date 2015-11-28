@@ -5,10 +5,43 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 public class EM_classeg {
-	 public static void main(String[] args) throws IOException{
+	
+	 public static HashMap<Integer, HashMap<String , Double>> inputtreemaps ; 
+	 public static HashMap<Integer, Double> score = new  HashMap<Integer, Double>();
+	 public static HashMap<String,Integer> mappy ;
+	 public static HashMap<String,Integer> totalmappy ;
+	 
+	 
+	 
+	 
+	 
+	 public static void main(String[] args) throws IOException{		
+		 PrintWriter writer = new PrintWriter("checkfile.txt", "UTF-8");
 		 
 		 List<String> trees = Files.readAllLines(Paths.get("inputtrees.txt"), StandardCharsets.UTF_8);
-		 HashMap<Integer, HashMap<String , Double>> inputtreemaps = new HashMap<Integer, HashMap<String , Double>>();
+		 inputtreemaps = new HashMap<Integer, HashMap<String , Double>>();
+		 
+		 List<String> ruleprob = Files.readAllLines(Paths.get("newrulefile.txt"), StandardCharsets.UTF_8);
+		 mappy = new  HashMap<String,Integer>();
+		 for (int i=0;i<ruleprob.size();i++){
+			 String key = ruleprob.get(i).split("--->")[0].trim();
+			 int value  = Integer.parseInt(ruleprob.get(i).split("--->")[1].trim());
+			 mappy.put(key, value);
+		 }
+		 
+		 writer.println(mappy.keySet());
+		 writer.close();
+		 totalmappy = new  HashMap<String,Integer>();
+		 for (int i=0;i<ruleprob.size();i++){
+			 String key = ruleprob.get(i).split("-->")[0].trim();			 
+			 int value  = Integer.parseInt(ruleprob.get(i).split("-->")[2].trim());
+			 if(!totalmappy.containsKey(key)){
+				 totalmappy.put(key, value);
+			 }else{
+				 totalmappy.put(key, totalmappy.get(key)+value);
+			 }
+		 }
+		 
 		 
 		 int index=-1;
 		 for(int i=0;i<trees.size();i++){
@@ -49,5 +82,70 @@ public class EM_classeg {
 		 }
 		 
 		 System.out.println(inputtreemaps);
+		 update_with_EM();
+		 System.out.println(inputtreemaps);
+		 update_with_EM();
+		 System.out.println(inputtreemaps);
+		 int ab=0;
+		 while(ab!=15){
+		 update_with_EM();
+		 ab++;
+		 }
+		 System.out.println(inputtreemaps);
+
+		 
+		 
+		 
 	 }
+	 
+	 public static void update_with_EM() throws IOException{
+		 for(int i=0;i<inputtreemaps.size();i++){
+			 
+			 ArrayList<Double> valuearray = new ArrayList<Double>(inputtreemaps.get(i).values());
+			 double value = 1;
+			 for(int j=0;j<valuearray.size();j++){
+				 value = value * valuearray.get(j);
+			 }
+			// System.out.println("i ---->"+valuearray);
+			 score.put(i, value);
+		 }
+		 System.out.println(score);
+		 int count =100;
+		 
+		 for(int i=0;i<inputtreemaps.size();i++){
+			 ArrayList<String> lines = new ArrayList<String>(inputtreemaps.get(i).keySet());
+			 for(int j=0;j<lines.size();j++){
+				 String totalkey = lines.get(j);
+				 String key = lines.get(j).split("-->")[0].trim();
+				 double totalscore=0;
+				 for(int k = 0;k<score.size();k++){
+					 totalscore= totalscore+score.get(k);
+				 }
+				 double prob = (double)((score.get(i)*count/totalscore)+((double)getfromdatabase(totalkey)))/((double)((score.get(i)*count/totalscore))+(double)gettotalfromdatabase(key));
+				 inputtreemaps.get(i).put(lines.get(j),prob);
+			 }
+		 }	 
+	 }
+	 
+	 public static int getfromdatabase(String rule) throws IOException{
+		 if(mappy.containsKey(rule))
+			 return mappy.get(rule);
+		 else {
+			 //System.out.println("not exist");
+			 return 0;
+		 }
+	 }
+	 
+	 public static int gettotalfromdatabase(String rule) throws IOException{
+		 String nonterminal = rule.split("-->")[0].trim();
+		 if(totalmappy.containsKey(nonterminal)){
+			 return totalmappy.get(nonterminal);
+		 }else{
+			 return 0;
+		 }
+		 
+	 }
+	 
+	 
+	 
 }

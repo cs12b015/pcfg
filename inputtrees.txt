@@ -1,15 +1,15 @@
 0
-S-->NP-SBJ VP
-NP-SBJ-->mary
-VP-->VB NP
-NP-->NP PP
-VB-->saw
-NP-->a bird
-PP-->on a tree
+S --> NP-SBJ VP
+NP-SBJ --> mary
+VP --> VB NP
+NP --> NP PP
+VB --> saw
+NP --> a bird
+PP --> on a tree
 0
-S-->NP-SBJ VP
-NP-SBJ-->mary
-VB-->saw
-NP-->a bird
-PP-->on a tree
-VP-->VB NP PP
+S --> NP-SBJ VP
+NP-SBJ --> mary
+VB --> saw
+NP --> a bird
+PP --> on a tree
+VP --> VB NP PP
