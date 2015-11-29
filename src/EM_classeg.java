@@ -10,8 +10,8 @@ public class EM_classeg {
 	 public static HashMap<Integer, Double> score = new  HashMap<Integer, Double>();
 	 public static HashMap<String,Integer> mappy ;
 	 public static HashMap<String,Integer> totalmappy ;
-	 
-	 
+	 public static double maxdelta;
+	 public static HashMap<Integer, HashMap<String , Double>> previnputtreemaps ;
 	 
 	 
 	 
@@ -20,6 +20,7 @@ public class EM_classeg {
 		 
 		 List<String> trees = Files.readAllLines(Paths.get("inputtrees.txt"), StandardCharsets.UTF_8);
 		 inputtreemaps = new HashMap<Integer, HashMap<String , Double>>();
+		 previnputtreemaps = new HashMap<Integer, HashMap<String , Double>>();
 		 
 		 List<String> ruleprob = Files.readAllLines(Paths.get("newrulefile.txt"), StandardCharsets.UTF_8);
 		 mappy = new  HashMap<String,Integer>();
@@ -48,10 +49,12 @@ public class EM_classeg {
 			 if(trees.get(i).equals("0")){
 				 index++;
 				 HashMap<String , Double> neew = new HashMap<String , Double>();
+				 HashMap<String , Double> neeew = new HashMap<String , Double>();
 				 inputtreemaps.put(index,neew );
+				 previnputtreemaps.put(index, neeew);
 			 }else{
 				 inputtreemaps.get(index).put(trees.get(i), (double)0);
-				 
+				 previnputtreemaps.get(index).put(trees.get(i), (double)0);
 			 }
 		 }
 		 //updating initial prob
@@ -81,22 +84,52 @@ public class EM_classeg {
 			 }	
 		 }
 		 
-		 System.out.println(inputtreemaps);
-		 update_with_EM();
-		 System.out.println(inputtreemaps);
-		 update_with_EM();
-		 System.out.println(inputtreemaps);
+		
+		 assign_maxdiff();
+		// System.out.println(maxdelta);
 		 int ab=0;
-		 while(ab!=15){
-		 update_with_EM();
-		 ab++;
+		 while(maxdelta > 0.000000001 ){
+			 update_with_EM();
+			 ab++;
+			 System.out.println(inputtreemaps);
 		 }
-		 System.out.println(inputtreemaps);
+		 System.out.println("no of iterations: "+ab);
+		// System.out.println(inputtreemaps);
 
 		 
 		 
 		 
 	 }
+	 
+	 public static void assign_maxdiff(){
+		 double max=0;
+		 for(int i=0;i<inputtreemaps.size();i++){
+			 ArrayList<String> lines = new ArrayList<String>(inputtreemaps.get(i).keySet());
+			 max=0;
+			 for(int j=0;j<lines.size();j++){
+				 String key = lines.get(j).split("-->")[0].trim();
+				 double tempmax=0;
+				 double prob = inputtreemaps.get(i).get(lines.get(j));
+				 double prevprob = previnputtreemaps.get(i).get(lines.get(j));
+				 if(prob>prevprob){
+					 tempmax = prob-prevprob;
+				 }else{
+					 tempmax = prevprob-prob;
+				 }
+				 if(max<tempmax){
+					 max=tempmax;
+				 }
+				// System.out.println("tempmax   "+tempmax);
+				 previnputtreemaps.get(i).put(lines.get(j), prob);
+			 }			 
+		 }	
+		 
+		maxdelta=max;
+		
+	 }
+	 
+	 
+	 
 	 
 	 public static void update_with_EM() throws IOException{
 		 for(int i=0;i<inputtreemaps.size();i++){
@@ -106,10 +139,8 @@ public class EM_classeg {
 			 for(int j=0;j<valuearray.size();j++){
 				 value = value * valuearray.get(j);
 			 }
-			// System.out.println("i ---->"+valuearray);
 			 score.put(i, value);
 		 }
-		 System.out.println(score);
 		 int count =100;
 		 
 		 for(int i=0;i<inputtreemaps.size();i++){
@@ -125,6 +156,7 @@ public class EM_classeg {
 				 inputtreemaps.get(i).put(lines.get(j),prob);
 			 }
 		 }	 
+		 assign_maxdiff();
 	 }
 	 
 	 public static int getfromdatabase(String rule) throws IOException{
